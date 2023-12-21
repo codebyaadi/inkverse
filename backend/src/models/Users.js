@@ -3,7 +3,7 @@ import mongoose, { Schema } from "mongoose";
 let profile_imgs_name_list = ["Garfield", "Tinkerbell", "Annie", "Loki", "Cleo", "Angel", "Bob", "Mia", "Coco", "Gracie", "Bear", "Bella", "Abby", "Harley", "Cali", "Leo", "Luna", "Jack", "Felix", "Kiki"];
 let profile_imgs_collections_list = ["notionists-neutral", "adventurer-neutral", "fun-emoji"];
 
-const userSchema = mongoose.Schema({
+const userSchema = new mongoose.Schema({
     personalInfo: {
         fullname: {
             type: String,
@@ -17,7 +17,10 @@ const userSchema = mongoose.Schema({
             lowercase: true,
             unique: true,
         },
-        password: String,
+        password: {
+            type: String,
+            required: true,
+        },
         username: {
             type: String,
             unique: true,
@@ -28,14 +31,14 @@ const userSchema = mongoose.Schema({
             maxlength: [200, "Bio should not be greater than 200 letters long"],
             default: "",
         },
-        profile_img: {
+        profileImg: {
             type: String,
             default: () => {
                 return `https://api.dicebear.com/6.x/${profile_imgs_collections_list[Math.floor(Math.random() * profile_imgs_collections_list.length)]}/svg?seed=${profile_imgs_name_list[Math.floor(Math.random() * profile_imgs_name_list.length)]}`;
             },
         },
     },
-    social_links: {
+    socialLinks: {
         youtube: {
             type: String,
             default: "",
@@ -53,13 +56,13 @@ const userSchema = mongoose.Schema({
             default: "",
         },
     },
-    account_info: {
+    accountInfo: {
         total_posts: {
             type: Number,
             default: 0,
         },
     },
-    google_auth: {
+    googleAuth: {
         type: Boolean,
         default: false,
     },
@@ -68,6 +71,10 @@ const userSchema = mongoose.Schema({
         ref: "posts",
         default: [],
     },
+    isArtist: {
+        type: Boolean,
+        default: false,
+    }
 }, {
     timestamps: {
         createdAt: "createdAt",
@@ -75,4 +82,6 @@ const userSchema = mongoose.Schema({
     },
 });
 
-export default mongoose.model("users", userSchema);
+const User = mongoose.model("users", userSchema);
+
+export default User;
