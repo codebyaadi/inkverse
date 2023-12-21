@@ -1,34 +1,44 @@
 // Importing third-party modules
 import express from "express";
+import * as dotenv from "dotenv";
 
 // Importing local utility functions and configurations
-import { logInfo } from "./utils/loginfo.utils.js";
 import connectDB from "./configs/database.js";
+import userRoutes from "./routes/user.route.js";
+import { logInfo } from "./utils/loginfo.utils.js";
 import { resetColor, successColor } from "./utils/ansicolors.utils.js";
 
-// Defining the default port
+// Load environment variables from .env file
+dotenv.config();
+
 const DEFAULT_PORT = parseInt(process.env.PORT || "8080", 10);
 
-// Creating an instance of the Express application
 const app = express();
+app.use(express.json());
 
-// Function to start the server
-const startServer = async () => {
-    try {
-        // Connect to the database
-        await connectDB();
+// Define routes
+app.use("/api", userRoutes);
 
-        // Start the Express server
-        app.listen(DEFAULT_PORT, () => {
-            logInfo(
-                `✨ ${successColor}Success!${resetColor} Your server running at http://localhost:${DEFAULT_PORT} 🚀`
-            );
-        });
-    } catch (error) {
-        // Handle any errors that occur during server startup
-        console.error(error);
-    }
-};
+// Default route
+app.get("/", (req, res) => {
+  res.status(200).json({
+    message: "Hello! Inkverse",
+  });
+});
 
 // Start the server
+const startServer = async () => {
+  try {
+    await connectDB();
+
+    app.listen(DEFAULT_PORT, () => {
+      logInfo(
+        `✨ ${successColor}Success!${resetColor} Your server running at http://localhost:${DEFAULT_PORT} 🚀`
+      );
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 startServer();
