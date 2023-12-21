@@ -21,6 +21,7 @@ const connectDB = async () => {
         // Connect to MongoDB with modern settings 
         await mongoose.connect(MONGO_URI, {
             w: "majority", // Ensure data consistency across all DB members ️
+            autoIndex: true,
         });
 
         const db = mongoose.connection.db; // Grab the database connection 
